@@ -1,1 +1,45 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import pandas as pd
 
+# Traffic data for each day in Abu Dhabi
+Monday_traffic = [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 0, 0]
+Friday_traffic = [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0]
+Saturday_traffic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]
+Sunday_traffic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]
+
+# Hours list
+hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ,16 ,17 ,18, 19, 20, 21, 22, 23]
+
+# Create dictionary 
+data_dict = {
+     'hour': hours * 4
+     'day_of_week': [1]*24 + [5]*24 + [6]*24 + [7]*24,
+     'is_weekend': [0]*24 + [0]*24 + [1]*24 + [1]*24,
+     'traffic_level': Monday_trafiic + Friday_traffic + Saturaday_traffic + Sunday_traffic
+}
+
+# Create Dataframe
+df = pd.DataFrame(data_dict)
+
+# Display Data
+print(df)
+print()
+print(f"Total rows: {len(df)}")
+print(f"Total columns: {len(df.columns)}")
+
+#
+df = pd.DataFrame(data_dict)
+
+#
+print(df.info())
+print(df.describe())
+
+#
+print(df['traffic_level'].value_counts())
+
+#
+print(df.groupby('day_of_week')['traffic_level'].mean())
+
+#
+print(df.groupby('hour')['traffic_level'].mean())
