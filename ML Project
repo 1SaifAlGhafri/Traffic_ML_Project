@@ -43,3 +43,27 @@ print(df.groupby('day_of_week')['traffic_level'].mean())
 
 #
 print(df.groupby('hour')['traffic_level'].mean())
+
+# Average traffic level
+average = df['traffic_level'].mean()
+
+# Maximum traffic
+max_traffic = df['traffic_level'].max()
+
+# Minimum traffic
+min_traffic = df['traffic_level'].min()
+
+# Counts heavy traffic hours 
+heavy_count = (df['traffic_level'] == 2).sum()
+
+# Percentage of heavy traffic
+percentage = (heavy_count / len(df)) * 100
+
+plt.figure(figsize=(12, 5))    # Create chart space (width=12, height=5)
+plt.plot(x, y, ...)            # Draw the line
+plt.xlabel('Hour')             # Label for x-axis
+plt.ylabel('Traffic level')    # Label for y-axis
+plt.title('Title')             # Title of chart
+plt.grid(True)                 # Add background grid
+plt.show()                     # Display the chart
+
