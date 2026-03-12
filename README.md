@@ -43,3 +43,14 @@ The traffic levels are based on my observations and common patterns in Abu Dhabi
 -I used online resources and AI assistance to help me structure the code, debug errors, and understand new functions, but I designed the dataset, chose the features, and decided what analysis and predictions to run.
 
 -The final script is something I can explain line by line: how the data is created, how the charts are made, and how the decision tree model is trained and tested.
+
+# Notebook
+1) You can view and run the full code and data in this Google Colab notebook:
+- Colab notebook: https://colab.research.google.com/drive/1QjY2YYSXAE_TQzDNji1rP935hjxpIEuz?usp=share_link
+
+2) This notebook contains the same data, analysis steps, charts, and machine learning model used in this project, so reviewers can run everything directly in the browser.
+
+# Demo Video (Data Exploration)
+1) This short video shows the data exploration part of the project (tables, basic statistics, and charts) without audio:
+
+- Data exploration video: https://drive.google.com/file/d/1rsp00IcIOZRD-yxf4Q5nPA4ih9LqWy2N/view?usp=share_link
