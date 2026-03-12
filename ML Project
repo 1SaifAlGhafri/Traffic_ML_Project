@@ -1,89 +1,231 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import pandas as pd
+import pandas as pd                  # work with tables of data
+import matplotlib.pyplot as plt      # make charts
+from sklearn.tree import DecisionTreeClassifier      # ML model
+from sklearn.model_selection import train_test_split # split data
+from sklearn.metrics import accuracy_score           # check accuracy
 
-# Traffic data for each day in Abu Dhabi
-monday_traffic = [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 0, 0]
-friday_traffic = [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0]
+# ------------------------------
+# STEP 1: CREATE TRAFFIC DATA
+# ------------------------------
+# 0 = low traffic, 1 = medium, 2 = heavy
+
+monday_traffic =  [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 0, 0]
+friday_traffic =  [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 0, 0]
 saturday_traffic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]
-sunday_traffic = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]
+sunday_traffic =   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1]
 
-# Hours list
-hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ,16 ,17 ,18, 19, 20, 21, 22, 23]
+# hours from 0:00 to 23:00
+hours = list(range(24))
 
-# Create dictionary 
+# ------------------------------
+# STEP 2: BUILD ONE TABLE (DATAFRAME)
+# ------------------------------
+# each row = one hour for one day
+
 data_dict = {
-     'hour': hours * 4
-     'day_of_week': [1]*24 + [5]*24 + [6]*24 + [7]*24,
-     'is_weekend': [0]*24 + [0]*24 + [1]*24 + [1]*24,
-     'traffic_level': monday_trafiic + friday_traffic + saturaday_traffic + sunday_traffic
+    "hour": hours * 4,  # repeat 0–23 for 4 days
+    "day_of_week": [1] * 24 + [5] * 24 + [6] * 24 + [7] * 24,  # 1=Mon,5=Fri,6=Sat,7=Sun
+    "is_weekend": [0] * 24 + [0] * 24 + [1] * 24 + [1] * 24,  # 0 = weekday, 1 = weekend
+    "traffic_level": (
+        monday_traffic + friday_traffic + saturday_traffic + sunday_traffic
+    ),
 }
 
-# Create Dataframe
-df = pd.DataFrame(data_dict)
+df = pd.DataFrame(data_dict)  # make the table
 
-# Display Data
+print("=" * 60)
+print("STEP 1-4: DATA EXPLORATION AND CALCULATIONS")
+print("=" * 60)
+
+# look at the raw data
 print(df)
 print()
 print(f"Total rows: {len(df)}")
 print(f"Total columns: {len(df.columns)}")
+print()
 
-#
-df = pd.DataFrame(data_dict)
-
-#
+# quick info about types and missing values
 print(df.info())
+print()
+
+# basic stats (mean, min, max for numeric columns)
 print(df.describe())
+print()
 
-#
-print(df['traffic_level'].value_counts())
+# how many times each traffic level appears
+print(df["traffic_level"].value_counts())
+print()
 
-#
-print(df.groupby('day_of_week')['traffic_level'].mean())
+# average traffic per day (1=Mon,5=Fri,6=Sat,7=Sun)
+print("Average traffic per day_of_week:")
+print(df.groupby("day_of_week")["traffic_level"].mean())
+print()
 
-#
-print(df.groupby('hour')['traffic_level'].mean())
+# average traffic for each hour across all days
+print("Average traffic per hour:")
+print(df.groupby("hour")["traffic_level"].mean())
+print()
 
-# Average traffic level
-average = df['traffic_level'].mean()
-
-# Maximum traffic
-max_traffic = df['traffic_level'].max()
-
-# Minimum traffic
-min_traffic = df['traffic_level'].min()
-
-# Counts heavy traffic hours 
-heavy_count = (df['traffic_level'] == 2).sum()
-
-# Percentage of heavy traffic
+# some simple overall numbers
+average = df["traffic_level"].mean()
+max_traffic = df["traffic_level"].max()
+min_traffic = df["traffic_level"].min()
+heavy_count = (df["traffic_level"] == 2).sum()
 percentage = (heavy_count / len(df)) * 100
 
-plt.figure(figsize=(12, 5))    # Create chart space (width=12, height=5)
-plt.plot(x, y, ...)            # Draw the line
-plt.xlabel('Hour')             # Label for x-axis
-plt.ylabel('Traffic level')    # Label for y-axis
-plt.title('Title')             # Title of chart
-plt.grid(True)                 # Add background grid
-plt.show()                     # Display the chart
+print(f"Average traffic level: {average:.2f}")
+print(f"Maximum traffic: {max_traffic}")
+print(f"Minimum traffic: {min_traffic}")
+print(f"Heavy traffic hours: {heavy_count}")
+print(f"Percentage of heavy traffic: {percentage:.2f}%")
+print()
 
-# Filter data for each day
-monday_data = df[df['day_of_week'] == 1]
-friday_data = df[df['day_of_week'] == 5]
-saturday_data = df[df['day_of_week'] == 6]
-sunday_data = df[df['day_of_week'] == 7]
+# ------------------------------
+# STEP 5: SIMPLE LINE CHART (ALL ROWS)
+# ------------------------------
+print("=" * 60)
+print("STEP 5: SIMPLE CHART")
+print("=" * 60)
 
-# Plot each day
-plt.plot(monday_data['hour'], monday_data['traffic_level'], label='Monday')
-plt.plot(friday_data['hour'], friday_data['traffic_level'], label='Friday')
-plt.plot(saturday_data['hour'], saturday_data['traffic_level'], label='Saturday')
-plt.plot(sunday_data['hour'], sunday_data['traffic_level'], label='Sunday')
-
-plt.legend() # Show which line is which
+plt.figure(figsize=(12, 5))
+plt.plot(df["hour"], df["traffic_level"], marker="o", linewidth=2, color="blue")
+plt.xlabel("Hour of Day")
+plt.ylabel("Traffic Level")
+plt.title("Traffic Level Throughout All Days")
+plt.grid(True, alpha=0.3)
 plt.show()
 
-# Calculate average traffic for each day
-traffic_by_day = df.groupby('day_of_week')['traffic_level'].mean()
+# ------------------------------
+# STEP 6: LINES FOR EACH DAY
+# ------------------------------
+print("=" * 60)
+print("STEP 6: ADD MORE DAYS")
+print("=" * 60)
 
-# Create a bar chart
-traffic_by_day.plot(kind='bar', color=['steelblue', 'orange', 'purple', 'green')]
+# filter rows for each day
+monday_data = df[df["day_of_week"] == 1]
+friday_data = df[df["day_of_week"] == 5]
+saturday_data = df[df["day_of_week"] == 6]
+sunday_data = df[df["day_of_week"] == 7]
+
+plt.figure(figsize=(12, 5))
+plt.plot(monday_data["hour"], monday_data["traffic_level"], marker="o", linewidth=2, label="Monday")
+plt.plot(friday_data["hour"], friday_data["traffic_level"], marker="o", linewidth=2, label="Friday")
+plt.plot(saturday_data["hour"], saturday_data["traffic_level"], marker="o", linewidth=2, label="Saturday")
+plt.plot(sunday_data["hour"], sunday_data["traffic_level"], marker="o", linewidth=2, label="Sunday")
+plt.xlabel("Hour of Day")
+plt.ylabel("Traffic Level")
+plt.title("Traffic Levels by Day of Week")
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# ------------------------------
+# STEP 7: BAR CHART (AVERAGE PER DAY)
+# ------------------------------
+print("=" * 60)
+print("STEP 7: COMPARE TRAFFIC BETWEEN DAYS")
+print("=" * 60)
+
+traffic_by_day = df.groupby("day_of_week")["traffic_level"].mean()
+
+print("Average traffic level by day:")
+print(traffic_by_day)
+print()
+
+plt.figure(figsize=(8, 5))
+traffic_by_day.plot(kind="bar", color=["steelblue", "orange", "purple", "green"])
+plt.ylabel("Average Traffic Level")
+plt.xlabel("Day of Week")
+plt.title("Average Traffic Levels by Day")
+plt.xticks(rotation=45)
+plt.grid(True, alpha=0.3, axis="y")
+plt.tight_layout()
+plt.show()
+
+# ------------------------------
+# STEP 8: FIND RUSH HOURS
+# ------------------------------
+print("=" * 60)
+print("STEP 8: FIND RUSH HOURS")
+print("=" * 60)
+
+traffic_by_hour = df.groupby("hour")["traffic_level"].mean()
+
+print("Average traffic level by hour:")
+print(traffic_by_hour)
+print()
+
+# find the hour with the highest average traffic (rush hour)
+max_traffic_hour = traffic_by_hour.idxmax()
+max_traffic_value = traffic_by_hour.max()
+
+print(f"Rush hour: Hour {max_traffic_hour} with traffic level {max_traffic_value:.2f}")
+print()
+
+plt.figure(figsize=(12, 5))
+plt.plot(traffic_by_hour.index, traffic_by_hour.values, marker="o", linewidth=2, color="red")
+plt.xlabel("Hour of Day")
+plt.ylabel("Average Traffic Level")
+plt.title("Average Traffic Level by Hour - Rush Hours Analysis")
+plt.grid(True, alpha=0.3)
+plt.xticks(range(0, 24))
+plt.tight_layout()
+plt.show()
+
+# ------------------------------
+# STEP 9: MACHINE LEARNING MODEL
+# ------------------------------
+print("=" * 60)
+print("STEP 9: MACHINE LEARNING MODEL")
+print("=" * 60)
+
+# X = inputs we give to the model
+X = df[["hour", "day_of_week", "is_weekend"]]
+
+# y = label we want to predict
+y = df["traffic_level"]
+
+# split data into training part and testing part
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# create decision tree model and train it
+model = DecisionTreeClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# make predictions on test data and check accuracy
+predictions = model.predict(X_test)
+accuracy = accuracy_score(y_test, predictions)
+
+print("Machine Learning Model Results:")
+print(f"Accuracy: {accuracy * 100:.2f}%")
+print()
+
+# test the model on some new times
+print("Traffic Predictions:")
+new_predictions = [
+    [7, 1, 0],   # 7:00, Monday, not weekend
+    [14, 1, 0],  # 14:00, Monday, not weekend
+    [19, 5, 0],  # 19:00, Friday, not weekend
+    [10, 6, 1],  # 10:00, Saturday, weekend
+    [18, 7, 1],  # 18:00, Sunday, weekend
+]
+
+prediction_labels = [
+    "Hour 7, Monday (Not Weekend)",
+    "Hour 14, Monday (Not Weekend)",
+    "Hour 19, Friday (Not Weekend)",
+    "Hour 10, Saturday (Weekend)",
+    "Hour 18, Sunday (Weekend)",
+]
+
+for i, pred in enumerate(new_predictions):
+    traffic_level = model.predict([pred])[0]
+    print(f"{prediction_labels[i]}: Traffic Level = {traffic_level}")
+
+print()
+print("=" * 60)
+print("ALL 9 STEPS COMPLETED SUCCESSFULLY!")
+print("=" * 60)
